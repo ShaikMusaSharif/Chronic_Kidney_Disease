@@ -1,0 +1,149 @@
+/* Ensure full-screen layout and proper alignment */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #aca5a5, #89a5d4); /* Subtle gradient for background */
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Header styling */
+header {
+    width: 100%;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #ffffff;
+}
+
+/* Main container styling */
+.container {
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%; /* Use 90% of the screen width */
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+/* Form styling */
+.upload-form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.upload-form input[type="file"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upload-form button {
+    padding: 10px 20px;
+    background-color: #ff4081;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1.2em;
+}
+
+.upload-form button:hover {
+    background-color: #ff79b0;
+}
+
+/* Results section */
+.results {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.results h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.results p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* Confusion Matrix */
+.confusion-matrix {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.confusion-matrix img {
+    width: 100%;
+    max-width: 300px;
+    transition: transform 0.3s ease;
+    border-radius: 5px;
+}
+
+.confusion-matrix img:hover {
+    transform: scale(1.1);
+}
+
+/* Final Decision */
+.final-decision {
+    margin-top: 30px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Footer (optional) */
+.footer {
+    text-align: center;
+    margin-top: 50px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .confusion-matrix {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .upload-form button {
+        width: 100%;
+    }
+}

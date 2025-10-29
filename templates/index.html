@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chronic Kidney Disease Prediction using CNN, LSTM, and Dense Networks. Upload images for analysis and view predictions.">
+    <title>Chronic Kidney Disease Prediction</title>
+    <style>
+        /* General Resets */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Sticky Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background-color: #3f51b5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar h1 {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: absolute;
+            right: 20px;
+            top: 25px;
+            cursor: pointer;
+            background-color: #ffeb3b;
+            border: none;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+
+        /* Main Content: Full Screen Layout */
+        .main-content {
+            display: flex;
+            height: calc(100vh - 80px); /* Full height minus navbar height */
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Left Section (Text and Form) */
+        .text-section {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            background-color: #ffffff;
+            border-right: 2px solid #e0e0e0;
+            transition: background-color 0.3s ease;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .upload-form input[type="file"] {
+            padding: 10px;
+            background-color: #f5f5f5;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .upload-form button {
+            padding: 10px 20px;
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .upload-form button:hover {
+            background-color: #283593;
+        }
+
+        .results {
+            margin-top: 40px;
+        }
+
+        .results h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .results p {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .final-decision {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Right Section (Confusion Matrices and Uploaded Image) */
+        .image-section {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            overflow-y: auto; /* Enable scrolling if content overflows */
+            max-height: 150px;
+            transition: background-color 0.3s ease;
+        }
+
+        .image-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .confusion-matrix {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .confusion-matrix img {
+            width: calc(30% - 10px); /* Fixes stretching, maintains aspect ratio */
+            height: auto; /* Keeps images in correct proportion */
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .confusion-matrix img:nth-child(3) {
+            width: 30%;
+            /* margin: 0 auto; */
+        }
+
+        .confusion-matrix img:hover {
+            transform: scale(1.05);
+        }
+
+        .uploaded-image {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #3f51b5;
+            border-radius: 5px;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .text-section, .image-section {
+                flex: none;
+                width: 100%;
+                padding: 10px;
+            }
+
+            .confusion-matrix img {
+                width: 100%; /* Each image takes full width on smaller screens */
+                margin: 10px 0;
+            }
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+
+        .text-section.dark-mode,
+        .image-section.dark-mode {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky NavBar -->
+    <nav class="navbar">
+        <h1>Chronic Kidney Disease Prediction</h1>
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">Toggle Dark Mode</button>
+    </nav>
+
+    <!-- Main Content Area (Spanning Full Screen) -->
+    <div class="main-content">
+        <!-- Left Side: Textual Information -->
+        <!-- <section class="text-section"> -->
+            <form class="upload-form" method="post" enctype="multipart/form-data" action="#">
+                <input type="file" name="file" accept="image/*" required>
+                <button type="submit">Upload and Predict</button>
+            </form>
+
+            {% if final_decision %}
+            <div class="results">
+                <h2>Prediction Results</h2>
+                <p><strong>CNN Prediction:</strong> {{ cnn_prediction }}</p>
+                <p><strong>LSTM Prediction:</strong> {{ lstm_prediction }}</p>
+                <p><strong>Dense Prediction:</strong> {{ dense_prediction }}</p>
+                
+                <div class="final-decision">
+                    <strong>Final Decision: </strong> {{ final_decision }}
+                </div>
+
+                <!-- Show the uploaded image below the final results -->
+                <!-- <h2>Uploaded Image</h2> -->
+                <!-- <img src="{{ url_for('static', filename=image_file) }}" alt="Uploaded Image" class="uploaded-image"> -->
+                
+            </div>
+            {% endif %}
+        <!-- </section> -->
+
+        <!-- Right Side: Image Content -->
+        <!-- <section class="image-section"> -->
+            {% if final_decision %}
+            <h2>Confusion Matrices</h2>
+            <div class="confusion-matrix">
+                <img src="{{ url_for('static', filename=cnn_cm_image) }}" alt="CNN Confusion Matrix">
+                <img src="{{ url_for('static', filename=lstm_cm_image) }}" alt="LSTM Confusion Matrix">
+                <img src="{{ url_for('static', filename=dense_cm_image) }}" alt="Dense Confusion Matrix">
+            </div>
+            {% endif %}
+        <!-- </section> -->
+    </div>
+
+    <script>
+        // Toggle Dark Mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.text-section').classList.toggle('dark-mode');
+            document.querySelector('.image-section').classList.toggle('dark-mode');
+        }
+    </script>
+</body>
+</html>
